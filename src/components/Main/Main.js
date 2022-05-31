@@ -88,7 +88,10 @@ const Main = (props) => {
           </Button>
         </form>
       )}
-      {props.isLoggedIn && <p className={classes.welcome}>Welcome back!</p>}
+      {props.isLoggedIn && <div>
+        <p className={classes.welcome}>Welcome back!</p>
+        <Button onClick={props.logoutHandler}>Logout</Button>
+        </div>}
     </Card>
   );
 };
