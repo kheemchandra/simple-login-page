@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
 
 import Card from "../UI/Card/Card";
-import Button from "../UI/Button/Button";
-
-import classes from "./Main.module.css";
+import Button from "../UI/Button/Button"; 
 import { UserContext } from "../../use-context";
+
+import classes from "./Main.module.css"; 
+import classes1 from "../UI/Input/Input.module.css";
+import Input from "../UI/Input/Input";
+
+const arr = [classes1['in'] + ' ' + classes1['input'], classes1['in'] + ' ' + classes1['invalid']];
 
 const emailReducer = (state, action) => { 
   if(action.signal === 'USER_INPUT'){
@@ -66,8 +70,8 @@ const Main = (props) => {
   }; 
 
   const emailBlur = (event) => { 
-    emailDispatch({signal: 'BLUR_INPUT'});
-    event.target.className = emailState.isValid ? classes.input : classes.invalid;
+    emailDispatch({signal: 'BLUR_INPUT'});  
+    event.target.className = emailState.isValid ? arr[0] : arr[1];
   };
   
   const passwordHandler = (event) => {
@@ -77,20 +81,20 @@ const Main = (props) => {
 
   const passwordBlur = (event) => {
     passwordDispatch({signal: 'BLUR_INPUT'});
-    event.target.className = passwordState.isValid ? classes.input : classes.invalid;
+    event.target.className = passwordState.isValid ? arr[0] : arr[1];
+    
   };
 
-  
-
+   
   return (
     <Card className={classes["form-wrapper"]}>
       {!ctx.isLoggedIn && (
         <form onSubmit={submitHandler} className={classes["form"]}>
           <div className={classes["form-control"]}>
             <label htmlFor="email">E-Mail</label>
-            <input
+            <Input
               value={emailState.value}
-              className={classes.input}
+              className={arr[0]}
               onChange={emailHandler}
               onBlur={emailBlur}
               id="email"
@@ -99,9 +103,9 @@ const Main = (props) => {
           </div>
           <div className={classes["form-control"]}>
             <label htmlFor="password">Password</label>
-            <input
+            <Input
               value={passwordState.value}
-              className={classes.input}
+              className={arr[0]}
               onChange={passwordHandler}
               onBlur={passwordBlur}
               id="password"
