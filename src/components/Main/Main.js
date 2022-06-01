@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import Button from "../UI/Button/Button";
 
 import classes from "./Main.module.css";
+
+const emailReducer = (prevState, action) => {
+
+};
 
 const Main = (props) => {
   const [emailState, setEmailState] = useState("");
@@ -14,10 +18,11 @@ const Main = (props) => {
 
   const [isFormValid, setFormValid] = useState(false);
 
+
   const submitHandler = (event) => {
     event.preventDefault(); 
 
-    if (isFormValid) {
+    if (isFormValid) { 
       setFormValid(false);
       setEmailState("");
       setEmailValid(false);
@@ -27,31 +32,43 @@ const Main = (props) => {
     }
   };
 
-  const emailHandler = (event) => {
-    let email = event.target.value;
-    emailValidator(email);
-    setEmailState(email);
-  };
+  
 
-  const emailValidator = (email) => {
-    setEmailValid(email.includes("@"));
-    setFormValid(email.includes("@") && isPasswordValid);
-  };
+  const emailHandler = (event) => {
+    let email = event.target.value;  
+    setEmailState(email);
+    setEmailValid(email.includes('@'));
+    // setFormValid(
+    //   email.includes('@') && isPasswordValid 
+    // );
+  }; 
 
   const emailBlur = (event) => {
     event.target.className = isEmailValid ? classes.input : classes.invalid;
   };
 
-  const passwordHandler = (event) => {
-    let password = event.target.value.trim();
-    passwordValidator(password);
-    setPasswordState(password);
-  };
+  // useEffect(() => {
+  //   let timer = setTimeout(()=>{ 
+  //     setFormValid(isEmailValid && isPasswordValid);
+  //     console.log('hi there');
+  //   }, 500);
 
-  const passwordValidator = (password) => {
+  //   return () => { clearTimeout(timer); };
+  // },[isEmailValid, isPasswordValid]);
+
+  useEffect(() => { 
+    console.log('You called me again.');
+      setFormValid(isEmailValid && isPasswordValid);  
+  },[isEmailValid, isPasswordValid]);
+  
+  const passwordHandler = (event) => {
+    let password = event.target.value.trim(); 
+    setPasswordState(password);
     setPasswordValid(password.length > 6);
-    setFormValid(isEmailValid && password.length > 6);
-  };
+    // setFormValid(
+    //   isEmailValid && password.length > 6
+    // );
+  }; 
 
   const passwordBlur = (event) => {
     event.target.className = isPasswordValid ? classes.input : classes.invalid;
