@@ -5,29 +5,53 @@ import Button from "../UI/Button/Button";
 
 import classes from "./Main.module.css";
 
-const emailReducer = (prevState, action) => {
-
+const emailReducer = (state, action) => {
+  console.log('Hi there');
+  if(action.signal === 'USER_INPUT'){
+    return {value: action.val, isValid: action.val.includes('@')}
+  }else if(action.signal === 'BLUR_INPUT'){
+    return {value: state.value, isValid: state.value.includes('@')}
+  }else{
+    return {value: '', isValid: false}
+  }
 };
 
-const Main = (props) => {
-  const [emailState, setEmailState] = useState("");
-  const [isEmailValid, setEmailValid] = useState(false);
+const passwordReducer = (state, action) => {
+  if(action.signal === 'USER_INPUT'){
+    return {value: action.val, isValid: action.val.length > 6}
+  }else if(action.signal === 'BLUR_INPUT'){
+    return {value: state.value, isValid: state.value.length > 6}
+  }else{
+    return {value: '', isValid: false}
+  }
+};
 
-  const [passwordState, setPasswordState] = useState("");
-  const [isPasswordValid, setPasswordValid] = useState(false);
+const Main = (props) => { 
+
+  const [emailState, emailDispatch] = useReducer(emailReducer, {
+    value: '',
+    isValid: null
+  });
+ 
+  const [passwordState, passwordDispatch] = useReducer(passwordReducer, {
+    value: '',
+    isValid: null
+  });
 
   const [isFormValid, setFormValid] = useState(false);
+
+  useEffect(() => { 
+    setFormValid(emailState.isValid && passwordState.isValid);
+  }, [emailState.isValid, passwordState.isValid]);
 
 
   const submitHandler = (event) => {
     event.preventDefault(); 
 
     if (isFormValid) { 
-      setFormValid(false);
-      setEmailState("");
-      setEmailValid(false);
-      setPasswordState("");
-      setPasswordValid(false);
+      setFormValid(false); 
+      emailDispatch({});
+      passwordDispatch({});
       props.loginHandler();
     }
   };
@@ -36,42 +60,22 @@ const Main = (props) => {
 
   const emailHandler = (event) => {
     let email = event.target.value;  
-    setEmailState(email);
-    setEmailValid(email.includes('@'));
-    // setFormValid(
-    //   email.includes('@') && isPasswordValid 
-    // );
+    emailDispatch({signal: 'USER_INPUT', val: email});
   }; 
 
-  const emailBlur = (event) => {
-    event.target.className = isEmailValid ? classes.input : classes.invalid;
+  const emailBlur = (event) => { 
+    emailDispatch({signal: 'BLUR_INPUT'});
+    event.target.className = emailState.isValid ? classes.input : classes.invalid;
   };
-
-  // useEffect(() => {
-  //   let timer = setTimeout(()=>{ 
-  //     setFormValid(isEmailValid && isPasswordValid);
-  //     console.log('hi there');
-  //   }, 500);
-
-  //   return () => { clearTimeout(timer); };
-  // },[isEmailValid, isPasswordValid]);
-
-  useEffect(() => { 
-    console.log('You called me again.');
-      setFormValid(isEmailValid && isPasswordValid);  
-  },[isEmailValid, isPasswordValid]);
   
   const passwordHandler = (event) => {
     let password = event.target.value.trim(); 
-    setPasswordState(password);
-    setPasswordValid(password.length > 6);
-    // setFormValid(
-    //   isEmailValid && password.length > 6
-    // );
+    passwordDispatch({signal: 'USER_INPUT', val: password});
   }; 
 
   const passwordBlur = (event) => {
-    event.target.className = isPasswordValid ? classes.input : classes.invalid;
+    passwordDispatch({signal: 'BLUR_INPUT'});
+    event.target.className = passwordState.isValid ? classes.input : classes.invalid;
   };
 
   return (
@@ -81,7 +85,7 @@ const Main = (props) => {
           <div className={classes["form-control"]}>
             <label htmlFor="email">E-Mail</label>
             <input
-              value={emailState}
+              value={emailState.value}
               className={classes.input}
               onChange={emailHandler}
               onBlur={emailBlur}
@@ -92,7 +96,7 @@ const Main = (props) => {
           <div className={classes["form-control"]}>
             <label htmlFor="password">Password</label>
             <input
-              value={passwordState}
+              value={passwordState.value}
               className={classes.input}
               onChange={passwordHandler}
               onBlur={passwordBlur}
