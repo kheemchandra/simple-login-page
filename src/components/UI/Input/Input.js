@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useRef, useImperativeHandle, forwardRef } from "react";
 
 
-const Input = (props) => {
+function Input(props, ref){
+  const inputRef = useRef();
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    }
+  }));
+
   return (
     <input
       value={props.value}
@@ -10,8 +18,11 @@ const Input = (props) => {
       onBlur={props.onBlur}
       id={props.id}
       type={props.type}
+      ref={inputRef}
     />
   );
-};
+}
+
+Input = forwardRef(Input);
 
 export default Input;
