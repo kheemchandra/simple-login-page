@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 
 import Card from "../UI/Card/Card";
 import Button from "../UI/Button/Button";
 
 import classes from "./Main.module.css";
+import { UserContext } from "../../use-context";
 
-const emailReducer = (state, action) => {
-  console.log('Hi there');
+const emailReducer = (state, action) => { 
   if(action.signal === 'USER_INPUT'){
     return {value: action.val, isValid: action.val.includes('@')}
   }else if(action.signal === 'BLUR_INPUT'){
@@ -28,6 +28,8 @@ const passwordReducer = (state, action) => {
 
 const Main = (props) => { 
 
+  const ctx = useContext(UserContext);
+  
   const [emailState, emailDispatch] = useReducer(emailReducer, {
     value: '',
     isValid: null
@@ -52,7 +54,7 @@ const Main = (props) => {
       setFormValid(false); 
       emailDispatch({});
       passwordDispatch({});
-      props.loginHandler();
+      ctx.loginHandler();
     }
   };
 
@@ -78,9 +80,11 @@ const Main = (props) => {
     event.target.className = passwordState.isValid ? classes.input : classes.invalid;
   };
 
+  
+
   return (
     <Card className={classes["form-wrapper"]}>
-      {!props.isLoggedIn && (
+      {!ctx.isLoggedIn && (
         <form onSubmit={submitHandler} className={classes["form"]}>
           <div className={classes["form-control"]}>
             <label htmlFor="email">E-Mail</label>
@@ -109,9 +113,9 @@ const Main = (props) => {
           </Button>
         </form>
       )}
-      {props.isLoggedIn && <div>
+      {ctx.isLoggedIn && <div>
         <p className={classes.welcome}>Welcome back!</p>
-        <Button onClick={props.logoutHandler}>Logout</Button>
+        <Button onClick={ctx.logoutHandler}>Logout</Button>
         </div>}
     </Card>
   );

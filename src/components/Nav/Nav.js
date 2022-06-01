@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../../use-context";
 
 import classes from "./Nav.module.css";
 
 const Nav = (props) => {
-
-  let style = (props.isLoggedIn) ? {} : {'display': 'none'};
+  const ctx = useContext(UserContext);
+  let style = (ctx.isLoggedIn) ? {} : {'display': 'none'};
 
 
   return (
@@ -16,7 +17,7 @@ const Nav = (props) => {
       <div style={style} className={classes["nav-right"]}>
         <a href="/">Users</a>
         <a href="/">Admin</a>
-        <button onClick={props.logoutHandler} className={classes.logout}>Logout</button>
+        <button onClick={ctx.logoutHandler} className={classes.logout}>Logout</button>
       </div>
     </nav>
   );
