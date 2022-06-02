@@ -25,7 +25,7 @@ const emailReducer = (state, action) => {
   } else if (action.signal === "BLUR_INPUT") {
     return { value: state.value, isValid: state.value.includes("@") };
   } else {
-    return { value: "", isValid: false };
+    return { value: "", isValid: null };
   }
 };
 
@@ -35,7 +35,7 @@ const passwordReducer = (state, action) => {
   } else if (action.signal === "BLUR_INPUT") {
     return { value: state.value, isValid: state.value.length > 6 };
   } else {
-    return { value: "", isValid: false };
+    return { value: "", isValid: null };
   }
 };
 
@@ -56,20 +56,34 @@ const Main = (props) => {
 
   useEffect(() => {
     setFormValid(emailState.isValid && passwordState.isValid);
+    if(emailState.isValid){
+      setEmailCls(arr[0]);
+    }else if(emailState.isValid === false){
+      setEmailCls(arr[1]);
+    }
+
+    if(passwordState.isValid){
+      setPasswordCls(arr[0]);
+    }else if(passwordState.isValid === false){
+      setPasswordCls(arr[1]);
+    }
   }, [emailState.isValid, passwordState.isValid]);
 
   const emailRef = useRef();
   const passwordRef = useRef();
+
+  const [emailCls, setEmailCls] = useState(arr[0]);
+  const [passwordCls, setPasswordCls] = useState(arr[0]);
 
   const submitHandler = (event) => {
     event.preventDefault();
 
     if (isFormValid) {
       setFormValid(false);
-      emailDispatch({});
       passwordDispatch({});
+      emailDispatch({});
       ctx.loginHandler();
-    }else if(!emailState.isValid){
+    }else if(emailState.isValid !== true ){
       emailRef.current.focus();
     }else{
       passwordRef.current.focus();
@@ -78,25 +92,22 @@ const Main = (props) => {
 
   const emailHandler = (event) => {
     let email = event.target.value;
-    emailDispatch({ signal: "USER_INPUT", val: email });
-    console.log('***********************');
-    emailRef.current.focus();
-    console.log('***********************');
+    emailDispatch({ signal: "USER_INPUT", val: email }); 
+
   };
 
   const emailBlur = (event) => {
-    emailDispatch({ signal: "BLUR_INPUT" });
-    event.target.className = emailState.isValid ? arr[0] : arr[1];
+    emailDispatch({ signal: "BLUR_INPUT" }); 
   };
 
   const passwordHandler = (event) => {
     let password = event.target.value.trim();
-    passwordDispatch({ signal: "USER_INPUT", val: password });
+    passwordDispatch({ signal: "USER_INPUT", val: password }); 
+
   };
 
   const passwordBlur = (event) => {
-    passwordDispatch({ signal: "BLUR_INPUT" });
-    event.target.className = passwordState.isValid ? arr[0] : arr[1];
+    passwordDispatch({ signal: "BLUR_INPUT" }); 
   };
 
   return (
@@ -107,7 +118,7 @@ const Main = (props) => {
             <label htmlFor="email">E-Mail</label>
             <Input
               value={emailState.value}
-              className={arr[0]}
+              className={emailCls}
               onChange={emailHandler}
               onBlur={emailBlur}
               id="email"
@@ -119,7 +130,7 @@ const Main = (props) => {
             <label htmlFor="password">Password</label>
             <Input
               value={passwordState.value}
-              className={arr[0]}
+              className={passwordCls}
               onChange={passwordHandler}
               onBlur={passwordBlur}
               id="password"
