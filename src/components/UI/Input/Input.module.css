@@ -1,0 +1,24 @@
+.in{
+  width: 75%;
+  border: 1px solid #ccc;
+  outline: none;
+  border-radius: 8px; 
+  padding: 8px; 
+  font-size: 16px;
+}
+
+
+.in.invalid{
+  background: rgb(249, 227, 225);
+  border: 1px solid red;
+}
+.in.input:focus{
+  border: 1px solid #641f82;
+  background-color: #f1cfff;
+}
+
+@media (max-width: 768px){
+  .in{
+    width: 100%;
+  }
+}
